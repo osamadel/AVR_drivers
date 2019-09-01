@@ -8,7 +8,7 @@
 #ifndef M_DIO_H_
 #define M_DIO_H_
 
-
+#include "stdtypes.h"
 
 /*LOW and HIGH macros*/
 #define LOW						0
