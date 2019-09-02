@@ -17,21 +17,21 @@
 #define H_LCD_INCREMENT_MODE					H_LCD_INCREMENT
 #define H_LCD_DISPLAY_SHIFT						H_LCD_NO_SHIFT
 
-#define H_LCD_RS 								M_DIO_PIN30
-#define H_LCD_RW 								M_DIO_PIN29
-#define H_LCD_E 								M_DIO_PIN28
+#define H_LCD_RS 								M_DIO_PIN26
+#define H_LCD_RW 								M_DIO_PIN25
+#define H_LCD_E 								M_DIO_PIN24
 
 #if H_LCD_MODE == H_LCD_8BIT
-	#define H_LCD_D0
-	#define H_LCD_D1
-	#define H_LCD_D2
-	#define H_LCD_D3
+	#define H_LCD_D0							M_DIO_PIN16
+	#define H_LCD_D1							M_DIO_PIN17
+	#define H_LCD_D2							M_DIO_PIN18
+	#define H_LCD_D3							M_DIO_PIN19
 #endif
 
-#define H_LCD_D4 								M_DIO_PIN27
-#define H_LCD_D5 								M_DIO_PIN26
-#define H_LCD_D6 								M_DIO_PIN25
-#define H_LCD_D7 								M_DIO_PIN24
+#define H_LCD_D4 								M_DIO_PIN20
+#define H_LCD_D5 								M_DIO_PIN21
+#define H_LCD_D6 								M_DIO_PIN22
+#define H_LCD_D7 								M_DIO_PIN23
 
 
 

@@ -12,6 +12,7 @@
 #include "H_LCD.h"
 
 void H_LCD_init(void) {
+	M_DIO_init();
 	M_DIO_pinWrite(H_LCD_E, LOW);
 	_delay_ms(50);
 	H_LCD_sendInstruction(INSTR_FUNCTION_SET);
@@ -64,7 +65,7 @@ void H_LCD_sendInstruction(u8 instr) {
 #endif
 }
 
-void H_LCD_sendData(u8 data) {
+void H_LCD_printChar(u8 data) {
 #if H_LCD_MODE == H_LCD_4BIT
 	M_DIO_pinWrite(H_LCD_RS, HIGH);
 	M_DIO_pinWrite(H_LCD_RW, LOW);
@@ -76,7 +77,7 @@ void H_LCD_sendData(u8 data) {
 	_delay_ms(2);
 	M_DIO_pinWrite(H_LCD_E, LOW);
 
-	M_DIO_pinWrite(H_LCD_RS, LOW);
+	M_DIO_pinWrite(H_LCD_RS, HIGH);
 	M_DIO_pinWrite(H_LCD_RW, LOW);
 	M_DIO_pinWrite(H_LCD_D7, data & (0x08));
 	M_DIO_pinWrite(H_LCD_D6, data & (0x04));
@@ -88,7 +89,7 @@ void H_LCD_sendData(u8 data) {
 
 
 #elif H_LCD_MODE == H_LCD_8BIT
-	M_DIO_pinWrite(H_LCD_RS, LOW);
+	M_DIO_pinWrite(H_LCD_RS, HIGH);
 	M_DIO_pinWrite(H_LCD_RW, LOW);
 	M_DIO_pinWrite(H_LCD_D7, data & (0x80));
 	M_DIO_pinWrite(H_LCD_D6, data & (0x40));
@@ -103,4 +104,49 @@ void H_LCD_sendData(u8 data) {
 	M_DIO_pinWrite(H_LCD_E, LOW);
 
 #endif
+}
+
+void H_LCD_clearDisplay(void) {
+	H_LCD_sendInstruction(1);
+}
+
+void H_LCD_cursorPosition(u8 line, u8 column) {
+	u8 local_u8Address;
+	if (line == 1) {
+		local_u8Address = 0x80 | (column-1);
+	} else if (line == 2) {
+		local_u8Address = 0xC0 | (column-1);
+	} else {
+		/*report error*/
+	}
+	H_LCD_sendInstruction(local_u8Address);
+}
+
+void H_LCD_printText(u8 *string) {
+	/*if text is a pointer to char array without '\0' delimeter,
+	this function will run forever*/
+	while (*string != 0) {
+		H_LCD_printChar(*string++);
+	}
+}
+
+void H_LCD_shiftDisplay(u8 shift_direction) {
+	if (shift_direction <= 1) {
+		H_LCD_sendInstruction(0x18 | shift_direction << 2);
+	} else {
+		/*report error*/
+	}
+}
+
+void H_LCD_printInt(u32 integer) {
+	u8 charToPrint[16];
+	u8 index = 0;
+	while (integer != 0) {
+		charToPrint[index] = (integer % 10) + '0';
+		integer /= 10;
+		index++;
+	}
+	while (index > 0) {
+		H_LCD_printChar(charToPrint[--index]);
+	}
 }

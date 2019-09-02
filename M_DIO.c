@@ -7,6 +7,8 @@
 
 
 void M_DIO_init (void) {
+	static u8 DIO_initialized = 0;
+	if (!DIO_initialized) {
 	#if PIN0_MODE == M_DIO_INPUT_PULLUP
 		SET_BIT(M_DIO_PIN0, PORTA);
 		#undef PIN0_MODE
@@ -234,6 +236,8 @@ void M_DIO_init (void) {
 			(PIN29_MODE << 5) 	|
 			(PIN30_MODE << 6) 	|
 			(PIN31_MODE << 7);
+	DIO_initialized = 1;
+	}
 }
 
 
