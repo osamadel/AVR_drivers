@@ -138,15 +138,73 @@ void H_LCD_shiftDisplay(u8 shift_direction) {
 	}
 }
 
-void H_LCD_printInt(u32 integer) {
+void H_LCD_printInt(s32 integer) {
 	u8 charToPrint[16];
 	u8 index = 0;
-	while (integer != 0) {
-		charToPrint[index] = (integer % 10) + '0';
-		integer /= 10;
-		index++;
+	if (integer != 0) {
+		if (integer < 0) {
+			H_LCD_printChar('-');
+			integer *= -1;
+		}
+		while (integer != 0) {
+			charToPrint[index] = (integer % 10) + '0';
+			integer /= 10;
+			index++;
+		}
+		while (index > 0) {
+			H_LCD_printChar(charToPrint[--index]);
+		}
+	} else {
+		H_LCD_printChar('0');
 	}
-	while (index > 0) {
-		H_LCD_printChar(charToPrint[--index]);
+}
+
+/*void H_LCD_printFloat (f32 fnumber, u8 decimalDigits) {
+	u8 charToPrint[16];
+	u32 integerPart;;
+	u8 index = 0;
+	if (fnumber != 0) {
+		if (fnumber < 0) {
+			H_LCD_printChar('-');
+			fnumber *= -1;
+		}
+		integerPart = (int) fnumber;
+		while (integerPart != 0) {
+			charToPrint[index] = (integerPart % 10) + '0';
+			integerPart /= 10;
+			index++;
+		}
+//		integerPart = (fnumber - (int)fnumber)* 10(decimalDigits - index + 1);
+		while (index > 0) {
+			H_LCD_printChar(charToPrint[--index]);
+		}
+		H_LCD_printChar('.');
+
+
+	} else {
+		H_LCD_printChar('0');
+		H_LCD_printChar('.');
+		for (u8 i = 0; i < decimalDigits; i++) {
+			H_LCD_printChar('0');
+		}
+	}
+}*/
+
+void H_LCD_reset (void) {
+	H_LCD_sendInstruction(0x01);
+	H_LCD_sendInstruction(0x02);
+}
+
+
+void H_LCD_addCustomChar (u8 * customChar, u8 index) {
+	u8 byteIndex;
+	if (index < 8) {
+		H_LCD_sendInstruction(0x40 | (index * 8));
+			for (byteIndex = 0; byteIndex < 8; byteIndex++) {
+				H_LCD_printChar(customChar[byteIndex]);
+			}
+		H_LCD_cursorPosition(1,1); // return DDRAM address to 0x00
+	} else {
+		/*report error*/
 	}
 }
